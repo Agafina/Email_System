@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Batch email sender interface">
+    <meta name="author" content="Email System">
+    <link rel="stylesheet" href="styles.css">
+    <title>Email System</title>
+</head>
+<body>
+  <main class="page-shell">
+    <section class="card">
+      <header class="card-header">
+        <h1>Email System</h1>
+        <p class="subtitle">Send messages to recipients individually or via CSV upload.</p>
+      </header>
+
+      <form id="emailForm" class="email-form">
+        <label for="subject">Subject</label>
+        <input type="text" id="subject" name="subject" required />
+
+        <label for="message">Message</label>
+        <textarea id="message" name="message" rows="6" required></textarea>
+
+        <label for="recipients">Recipients (comma-separated)</label>
+        <textarea id="recipients" name="recipients" rows="3" placeholder="a@mail.com, b@mail.com"></textarea>
+
+        <label for="csvFile">Or import a CSV file</label>
+        <input type="file" id="csvFile" name="csvFile" accept=".csv" />
+
+        <button type="submit">Send Batch</button>
+        <p id="status" class="status-text"></p>
+      </form>
+    </section>
+  </main>
+
+  <script src="scripts.js"></script>
+</body>
+</html>
