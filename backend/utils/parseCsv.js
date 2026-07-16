@@ -7,12 +7,20 @@ function parseCsv(filePath) {
         fs.createReadStream(filePath)
             .pipe(csv())
             .on('data', (row) => {
-                const emailKey = Object.keys(row).find(k => k.toLowerCase() === 'email') || Object.keys(row)[0];
-                const email = row[emailKey];
-                if (email) {
-                    rows.push({ email: email.trim(), ...row }); // keeps name, company, etc.
-                }
-            })
+                    // Normalize keys (trim) and values
+                    const normalized = {};
+                    Object.keys(row).forEach(k => {
+                        const key = k && String(k).trim().replace(/^\uFEFF/, '');
+                        const val = row[k];
+                        normalized[key] = typeof val === 'string' ? val.trim() : val;
+                    });
+
+                    const emailKey = Object.keys(normalized).find(k => k && k.toLowerCase() === 'email') || Object.keys(normalized)[0];
+                    const email = emailKey ? normalized[emailKey] : undefined;
+                    if (email && String(email).trim()) {
+                        rows.push(Object.assign({ email: String(email).trim() }, normalized)); // keeps name, company, etc.
+                    }
+                })
             .on('end', () => resolve(rows))
             .on('error', (error) => reject(error));
     });

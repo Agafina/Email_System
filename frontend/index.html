@@ -3,37 +3,261 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Batch email sender interface">
+    <meta name="description" content="Premium Batch Email Sender dashboard">
     <meta name="author" content="Email System">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
-    <title>Email System</title>
+    <title>Email System Dashboard</title>
 </head>
 <body>
-  <main class="page-shell">
-    <section class="card">
-      <header class="card-header">
-        <h1>Email System</h1>
-        <p class="subtitle">Send messages to recipients individually or via CSV upload.</p>
-      </header>
+  <!-- Dark glow background effects -->
+  <div class="bg-glow bg-glow-1"></div>
+  <div class="bg-glow bg-glow-2"></div>
 
-      <form id="emailForm" class="email-form">
-        <label for="subject">Subject</label>
-        <input type="text" id="subject" name="subject" required />
+  <div class="app-container">
+    <!-- Top Navigation Bar -->
+    <header class="app-header">
+      <div class="logo-area">
+        <svg class="logo-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
+        <div class="logo-text">
+          <h1>Antigravity Mail</h1>
+          <span class="version-badge">v1.2.0</span>
+        </div>
+      </div>
+      
+      <div class="header-actions">
+        <!-- Connection Status Badge -->
+        <div id="connectionStatus" class="status-badge status-checking">
+          <span class="status-dot"></span>
+          <span class="status-label">Checking API...</span>
+        </div>
+        
+        <!-- SMTP Mode Badge -->
+        <div id="smtpStatus" class="status-badge status-checking">
+          <span class="status-dot"></span>
+          <span class="status-label">Checking SMTP...</span>
+        </div>
 
-        <label for="message">Message</label>
-        <textarea id="message" name="message" rows="6" required></textarea>
+        <!-- Settings Button -->
+        <button id="toggleSettingsBtn" class="icon-btn" aria-label="Settings">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.1a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+        </button>
+      </div>
+    </header>
 
-        <label for="recipients">Recipients (comma-separated)</label>
-        <textarea id="recipients" name="recipients" rows="3" placeholder="a@mail.com, b@mail.com"></textarea>
+    <!-- Main Dynamic Layout Grid -->
+    <main class="dashboard-grid">
+      <!-- Left Column: Composer -->
+      <section class="card composer-card">
+        <div class="card-header">
+          <div class="header-title">
+            <svg class="header-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+            <h2>Compose Campaign</h2>
+          </div>
+          <button type="button" id="previewToggleBtn" class="text-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+            <span>Live Preview</span>
+          </button>
+        </div>
 
-        <label for="csvFile">Or import a CSV file</label>
-        <input type="file" id="csvFile" name="csvFile" accept=".csv" />
+        <form id="emailForm" class="email-form">
+          <div class="form-group">
+            <label for="subject">Subject Line</label>
+            <div class="input-wrapper">
+              <input type="text" id="subject" name="subject" placeholder="Ex: Welcome to the team, {{name}}!" required />
+            </div>
+          </div>
 
-        <button type="submit">Send Batchs</button>
-        <p id="status" class="status-text"></p>
-      </form>
-    </section>
-  </main>
+          <div class="form-group">
+            <label for="message">Message Body</label>
+            <div class="textarea-wrapper">
+              <textarea id="message" name="message" rows="8" placeholder="Hello {{name}},\n\nWelcome to {{company}}! We're excited to have you..." required></textarea>
+            </div>
+          </div>
+          
+          <!-- Helper tag suggestions -->
+          <div class="merge-tags-section">
+            <span class="tags-label">Click columns to insert merge tags:</span>
+            <div id="tagsCloud" class="tags-cloud">
+              <span class="merge-tag default-tag" data-tag="email">{{email}}</span>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" id="sendBtn" class="primary-btn">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="btn-icon"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+              <span>Launch Campaign</span>
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <!-- Right Column: Recipients & Import -->
+      <section class="card recipients-card">
+        <div class="card-header">
+          <div class="header-title">
+            <svg class="header-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            <h2>Target Audience</h2>
+          </div>
+        </div>
+
+        <!-- File Upload Area -->
+        <div class="upload-zone" id="dropzone">
+          <input type="file" id="csvFile" name="csvFile" accept=".csv" class="file-input" />
+          <div class="upload-prompt">
+            <svg class="upload-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            <p class="main-prompt">Drag & Drop CSV file here or <span>browse</span></p>
+            <p class="sub-prompt">Supports .csv files up to 2MB (must contain an 'email' column)</p>
+          </div>
+          <div class="file-details" id="fileDetails">
+            <svg class="file-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
+            <div class="file-info">
+              <span class="file-name" id="fileName">recipients.csv</span>
+              <span class="file-size" id="fileSize">12 KB</span>
+              <span class="file-rows" id="fileRows">48 recipients parsed</span>
+            </div>
+            <button type="button" id="removeFileBtn" class="remove-btn" title="Remove file">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="separator">
+          <span>Or enter manual addresses</span>
+        </div>
+
+        <div class="form-group">
+          <label for="recipients">Manual Recipients</label>
+          <div class="textarea-wrapper">
+            <textarea id="recipients" name="recipients" rows="4" placeholder="john@example.com, alice@company.com, robert@domain.net"></textarea>
+          </div>
+        </div>
+      </section>
+
+      <!-- Bottom Span: Active Progress Panel -->
+      <section class="card progress-card" id="progressCard">
+        <div class="card-header">
+          <div class="header-title">
+            <svg class="header-icon pulse-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            <h2>Batch Campaign Status</h2>
+          </div>
+          <span class="badge" id="batchStateBadge">Idle</span>
+        </div>
+
+        <div class="progress-details">
+          <!-- Stats Row -->
+          <div class="stats-grid">
+            <div class="stat-box">
+              <span class="stat-label">Total Recipients</span>
+              <span class="stat-value" id="statTotal">0</span>
+            </div>
+            <div class="stat-box success-stat">
+              <span class="stat-label">Successfully Sent</span>
+              <span class="stat-value" id="statSent">0</span>
+            </div>
+            <div class="stat-box error-stat">
+              <span class="stat-label">Failed Deliveries</span>
+              <span class="stat-value" id="statFailed">0</span>
+            </div>
+            <div class="stat-box rate-stat">
+              <span class="stat-label">Progress Rate</span>
+              <span class="stat-value" id="statRate">0%</span>
+            </div>
+          </div>
+
+          <!-- Progress Bar -->
+          <div class="progress-container">
+            <div class="progress-bar-bg">
+              <div class="progress-bar-fill" id="progressBarFill" style="width: 0%"></div>
+            </div>
+          </div>
+          
+          <!-- Live Logs Console -->
+          <div class="console-section">
+            <div class="console-header">
+              <span>Activity Log</span>
+              <button type="button" class="text-btn btn-sm" id="clearLogsBtn">Clear Logs</button>
+            </div>
+            <div class="console-body" id="consoleLogs">
+              <div class="console-line system-line">System ready. Waiting to launch campaign...</div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Side Drawer Settings Overlay -->
+    <div class="drawer-overlay" id="settingsDrawer">
+      <div class="drawer-content">
+        <div class="drawer-header">
+          <div class="drawer-title">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+            <h3>Connection Settings</h3>
+          </div>
+          <button type="button" id="closeSettingsBtn" class="close-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+
+        <div class="drawer-body">
+          <p class="drawer-desc">Configure the connection to your server API. These parameters are saved locally in your browser.</p>
+          
+          <div class="form-group">
+            <label for="settingsApiBase">API Base URL</label>
+            <input type="url" id="settingsApiBase" placeholder="http://localhost:4000" />
+            <span class="input-tip">Include the protocol and port (e.g. http://localhost:4000)</span>
+          </div>
+
+          <div class="form-group">
+            <label for="settingsApiKey">API Secret Key (x-api-key)</label>
+            <input type="password" id="settingsApiKey" placeholder="Enter x-api-key value" />
+            <span class="input-tip">Defaults to 'my-secret-api-key' in development.</span>
+          </div>
+
+          <div class="drawer-actions">
+            <button type="button" id="saveSettingsBtn" class="primary-btn full-width">Save & Test Connection</button>
+          </div>
+          
+          <div class="settings-diagnostics" id="settingsDiagnostics">
+            <span class="diagnostic-title">Diagnostic Logs</span>
+            <pre class="diagnostic-logs" id="diagnosticLogs">No diagnostic run yet.</pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Live Preview Modal overlay -->
+    <div class="drawer-overlay" id="previewModal">
+      <div class="drawer-content preview-content">
+        <div class="drawer-header">
+          <div class="drawer-title">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+            <h3>Merged Email Preview</h3>
+          </div>
+          <button type="button" id="closePreviewBtn" class="close-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+        <div class="drawer-body">
+          <p class="drawer-desc">This is how the email will look for the first recipient in your list. Use variables like <code class="code-inline">{{name}}</code> in your composer.</p>
+          
+          <div class="preview-device">
+            <div class="preview-mail-header">
+              <div><strong>From:</strong> <span id="previewFrom">sender@example.com</span></div>
+              <div><strong>To:</strong> <span id="previewTo">recipient@domain.com</span></div>
+              <div><strong>Subject:</strong> <span id="previewSubject">Campaign Subject</span></div>
+            </div>
+            <div class="preview-mail-body" id="previewBody">
+              Mail message content merged.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
 
   <script src="scripts.js"></script>
 </body>
