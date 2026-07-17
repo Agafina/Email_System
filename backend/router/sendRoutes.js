@@ -106,6 +106,14 @@ router.post('/send-emails', requireApiKey, sendLimiter, upload.single('csvFile')
         });
     }
 
+    const mailStatus = transporter.getStatus();
+    if (mailStatus.mode === 'failed') {
+        return res.status(500).json({
+            success: false,
+            error: mailStatus.error || 'SMTP is not configured correctly. Fix your SMTP credentials before sending emails.'
+        });
+    }
+
     const jobId = createJob(recipients.length);
     res.json({ success: true, jobId, total: recipients.length });
 
@@ -179,6 +187,12 @@ router.post('/send-emails/test', requireApiKey, async (req, res) => {
         }
 
         const mailStatus = transporter.getStatus();
+        if (mailStatus.mode === 'failed' && process.env.ALLOW_ETHEREAL_FALLBACK !== 'true' && process.env.SKIP_SMTP_VERIFY !== 'true') {
+            return res.status(500).json({
+                success: false,
+                error: mailStatus.error || 'SMTP is not configured correctly. Fix your SMTP credentials before sending emails.'
+            });
+        }
         const fromAddress = (usedTestAccount || mailStatus.mode === 'ethereal') ? (usedTestAccount ? sendTransport.options.auth.user : mailStatus.user) : (process.env.SMTP_USER || 'no-reply@example.com');
 
         const info = await sendTransport.sendMail({

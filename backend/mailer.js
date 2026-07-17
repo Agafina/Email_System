@@ -8,6 +8,10 @@ let mailerStatus = {
     error: null
 };
 
+function allowEtherealFallback() {
+    return process.env.ALLOW_ETHEREAL_FALLBACK === 'true' || process.env.SKIP_SMTP_VERIFY === 'true';
+}
+
 function getTransporter() {
     if (!activeTransporter) {
         activeTransporter = nodemailer.createTransport({
@@ -26,6 +30,13 @@ function getTransporter() {
 }
 
 async function useEtherealFallback(err) {
+    if (!allowEtherealFallback()) {
+        console.error('SMTP verification failed and Ethereal fallback is disabled:', err ? err.message : 'Unknown');
+        mailerStatus.mode = 'failed';
+        mailerStatus.error = err ? err.message : 'SMTP verification failed.';
+        return false;
+    }
+
     try {
         console.warn('Initializing Ethereal test account fallback due to SMTP error:', err ? err.message : 'Unknown');
         const testAccount = await nodemailer.createTestAccount();
@@ -63,9 +74,12 @@ module.exports = {
         const t = getTransporter();
         t.verify((err) => {
             if (err) {
+                mailerStatus.mode = 'failed';
+                mailerStatus.error = err && err.message ? err.message : String(err);
                 cb(err);
             } else {
                 mailerStatus.mode = 'configured';
+                mailerStatus.error = null;
                 cb(null);
             }
         });
