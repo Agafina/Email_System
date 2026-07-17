@@ -28,28 +28,12 @@ app.use(helmet());
 // - If ALLOWED_ORIGIN is set to a comma-separated list, only those origins are allowed.
 // - If ALLOWED_ORIGIN is unset or set to '*', all origins are allowed (dev-friendly, reflects request origin
 //   so it still works correctly even when credentials are involved).
-const allowedOriginsEnv = process.env.ALLOWED_ORIGIN || '*';
-
-let corsOptions;
-if (allowedOriginsEnv === '*') {
-    corsOptions = {
-        origin: (origin, callback) => callback(null, true), // reflect any origin
-        credentials: true
-    };
-} else {
-    const allowedOrigins = allowedOriginsEnv.split(',').map(o => o.trim()).filter(Boolean);
-    corsOptions = {
-        origin: (origin, callback) => {
-            // allow requests with no origin (curl, Postman, server-to-server)
-            if (!origin) return callback(null, true);
-            if (allowedOrigins.includes(origin)) {
-                return callback(null, true);
-            }
-            return callback(new Error(`Origin ${origin} not allowed by CORS`));
-        },
-        credentials: true
-    };
-}
+const corsOptions = {
+    origin: (origin, callback) => callback(null, true),
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'x-api-key', 'Authorization']
+};
 
 app.use(cors(corsOptions));
 

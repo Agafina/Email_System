@@ -65,7 +65,14 @@ router.post('/send-emails', requireApiKey, sendLimiter, upload.single('csvFile')
         return res.status(400).json({ success: false, error: 'Recipients must be a JSON array of emails.' });
     }
 
-    let manualRecipients = parsedRecipients.map(email => ({ email }));
+    let manualRecipients = parsedRecipients.map(item => {
+        if (typeof item === 'string') {
+            return { email: item };
+        } else if (item && typeof item === 'object' && item.email) {
+            return item;
+        }
+        return null;
+    }).filter(Boolean);
     let rows = manualRecipients;
 
     try {
